@@ -16,6 +16,11 @@ update equipamento set valorHora = valorHora * 0.9 where nomeEquipamento like 'C
 
 /*10)Listar todas as cidades onde a barraca possui cliente.*/
 
+/* todos que tem aluguel */
 select DISTINCT c.cidade from aluguelequipamento ae
 LEFT JOIN aluguel a on ae.idAluguel = a.idAluguel
 left join cliente c on a.idCliente = c.idCliente;
+
+
+/* todos os cadastrados */
+select DISTINCT cidade from cliente;
