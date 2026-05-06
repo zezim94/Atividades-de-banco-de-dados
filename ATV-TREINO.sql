@@ -19,11 +19,11 @@ T3 - Listar a data da consulta, o paciente que será atendido,
 e qual a especialidade do médico que irá atendê-lo, da consulta
 mais longe para a mais próxima.
 */
-SELECT consulta.`dataHoraConsulta`, paciente.nome, especialidade.`nomeEspecialidade` from consulta
-JOIN medico ON consulta.idmedico = medico.`idMedico`
-JOIN especialidade ON medico.`idEspecialidade` = especialidade.`idEspecialidade`
-JOIN paciente ON consulta.idpaciente = paciente.`idPaciente`
-ORDER BY `dataHoraConsulta` DESC;
+SELECT DATE_FORMAT(c.dataHoraConsulta, '%d/%m/%Y') as 'Data Consulta', p.nome as 'Paciente', e.nomeEspecialidade as 'Especialidade' from consulta as c
+JOIN medico as m ON c.idmedico = m.idMedico
+JOIN especialidade as e ON m.idEspecialidade = e.idEspecialidade
+JOIN paciente as p ON c.idpaciente = p.idPaciente
+ORDER BY dataHoraConsulta DESC;
 
 /*
 T4 - Inserir um Dr a mais na tabela medicos, 
