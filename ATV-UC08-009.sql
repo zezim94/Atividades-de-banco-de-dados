@@ -63,13 +63,11 @@ create PROCEDURE ps_forma_pagamento
 (
     in forma_pagamento_busca VARCHAR(50)
 )
-select e.`nomeEquipamento` as Equipamento, sum(ae.`valorItem`) as 'Total Arrecadado' from aluguel a
-join aluguelequipamento ae on a.`idAluguel` = ae.`idAluguel`
-JOIN equipamento e ON ae.`idEquipamento` = e.`idEquipamento`
+select a.`formaPagamento` as 'Forma Pagamento', COUNT(*) as 'Total' from aluguel a
 WHERE `formaPagamento` = forma_pagamento_busca
-GROUP BY e.`nomeEquipamento`;
+GROUP BY a.`formaPagamento`;
 
-call ps_forma_pagamento ('Pix');
+call ps_forma_pagamento ('debito');
 
 /* nesse caso procedure, pois a busca vai ser dinamica, passando o paramnetro a busca já vai ser feita */
 
@@ -93,14 +91,15 @@ create Procedure pi_insert_aluguel
     in equipamento_baixa int
 
 )
-BEGIN
+
   DECLARE aluguel_id INT;
 insert into aluguel(idCliente, idFuncionario, dataHoraretirada) values(cliente, funcionario, data_hora);
  SET aluguel_id = LAST_INSERT_ID();
 insert into aluguelequipamento(idEquipamento, idAluguel, valorItem, valorUnitario, qtd) values(equipamento, aluguel_id, valor_total, valor_unitario, quantidade);
 
 update equipamento set qtd = baixa_qtd WHERE `idEquipamento` = equipamento_baixa;
-END
+
+
 
 call pi_insert_aluguel (
     1,
