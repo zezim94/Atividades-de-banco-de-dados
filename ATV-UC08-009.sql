@@ -67,7 +67,7 @@ select a.`formaPagamento` as 'Forma Pagamento', COUNT(*) as 'Total' from aluguel
 WHERE `formaPagamento` = forma_pagamento_busca
 GROUP BY a.`formaPagamento`;
 
-call ps_forma_pagamento ('debito');
+call ps_forma_pagamento ('pix');
 
 /* nesse caso procedure, pois a busca vai ser dinamica, passando o paramnetro a busca já vai ser feita */
 
@@ -75,31 +75,55 @@ call ps_forma_pagamento ('debito');
 atualizando o estoque e tudo que for necessário através de uma procedure
 de criar aluguel*/
 
-create Procedure pi_insert_aluguel
-(
+create Procedure pi_insert_aluguel (
     in cliente int,
     in funcionario int,
     in data_hora DATETIME,
-
     in equipamento int,
     in aluguel int,
-    in valor_unitario DECIMAL(10,2),
-    in valor_total DECIMAL(10,2),
+    in valor_unitario DECIMAL(10, 2),
+    in valor_total DECIMAL(10, 2),
     in quantidade int,
-
     in baixa_qtd int,
     in equipamento_baixa int
+) DECLARE aluguel_id INT;
 
-)
+insert into
+    aluguel (
+        idCliente,
+        idFuncionario,
+        dataHoraretirada
+    )
+values (
+        cliente,
+        funcionario,
+        data_hora
+    );
 
-  DECLARE aluguel_id INT;
-insert into aluguel(idCliente, idFuncionario, dataHoraretirada) values(cliente, funcionario, data_hora);
- SET aluguel_id = LAST_INSERT_ID();
-insert into aluguelequipamento(idEquipamento, idAluguel, valorItem, valorUnitario, qtd) values(equipamento, aluguel_id, valor_total, valor_unitario, quantidade);
+SET
+    aluguel_id = LAST_INSERT_ID();
 
-update equipamento set qtd = baixa_qtd WHERE `idEquipamento` = equipamento_baixa;
+insert into
+    aluguelequipamento (
+        idEquipamento,
+        idAluguel,
+        valorItem,
+        valorUnitario,
+        qtd
+    )
+values (
+        equipamento,
+        aluguel_id,
+        valor_total,
+        valor_unitario,
+        quantidade
+    );
 
-
+update equipamento
+set
+    qtd = baixa_qtd
+WHERE
+    `idEquipamento` = equipamento_baixa;
 
 call pi_insert_aluguel (
     1,
@@ -113,3 +137,58 @@ call pi_insert_aluguel (
     1,
     3
 );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+START TRANSACTION
+
+INSERT INTO
+    aluguel (
+        idCliente,
+        idFuncionario,
+        dataHoraRetirada,
+        valorApagar
+    )
+VALUES (1,2, NOW(),2);
+
+INSERT INTO
+    aluguelequipamento (
+        idEquipamento,
+        idAluguel,
+        valorItem,
+        valorUnitario,
+        qtd
+    )
+VALUES (1,LAST_INSERT_ID(),2,2,1);
+
+UPDATE equipamento
+SET
+    qtd = qtd - 1
+WHERE
+    idEquipamento = 1;
