@@ -1,0 +1,1 @@
+select * from aluguel LIMIT 1,19;

@@ -34,13 +34,10 @@ PIX       67
 CRÉDITO  177
 */
 create view vw_forma_pagamento as
-select e.`nomeEquipamento` as Equipamento, sum(ae.`valorItem`) as 'Total Arrecadado'
-from
-    aluguel a
-    join aluguelequipamento ae on a.`idAluguel` = ae.`idAluguel`
-    JOIN equipamento e ON ae.`idEquipamento` = e.`idEquipamento`
+select a.`formaPagamento` as 'Forma pagamento', COUNT(*) as 'Total'
+from aluguel a
 GROUP BY
-    e.`nomeEquipamento`;
+    a.`formaPagamento`
 
 SELECT * from vw_forma_pagamento;
 
